@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import css from './Form.module.css';
+import { nanoid } from 'nanoid';
 // import { useDispatch, useSelector } from 'react-redux';
 import {
-  useAddContactsMutation,
+  useAddContactMutation,
   useGetContactByNameQuery,
 } from 'redux/contactApi';
 
@@ -10,8 +11,9 @@ export const Form = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
 
-  const [addContact] = useAddContactsMutation();
   const contacts = useGetContactByNameQuery().data;
+  const [addContact] = useAddContactMutation();
+  
 
   const onChangeInputName = event => {
     setName(event.currentTarget.value);
@@ -23,6 +25,7 @@ export const Form = () => {
   const handleSubmit = event => {
     event.preventDefault();
     const contactItem = {
+      id: nanoid(10),
       name,
       phone,
     };
