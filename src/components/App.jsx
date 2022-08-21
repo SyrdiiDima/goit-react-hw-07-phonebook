@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Form } from './Form/Form';
 import FilterContact from './FilterContact/FilterContact';
 import ContactList from './ContactList/ContactList';
@@ -40,7 +40,6 @@ export const App = () => {
     <div>
       <h1>Phonebook</h1>
       <Form />
-
       <h2>Contacts</h2>
       <div>
         <FilterContact />

@@ -1,39 +1,43 @@
 import ContactItem from 'components/ContactItem/ContactItem';
-import { deleteContact } from 'redux/contactSlice';
-import { useDispatch, useSelector } from 'react-redux';
+
+import {  useSelector } from 'react-redux';
+import { useGetContactByNameQuery } from 'redux/contactApi';
+import React from 'react';
+
 
 const ContactList = () => {
-  const contacts = useSelector(state => state.contacts.items);
-  const filter = useSelector(state => state.contacts.filter);
-  const dispatch = useDispatch();
-  const getVisibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(({ name }) =>
-      name.toLowerCase().includes(normalizedFilter)
+  const contacts = useGetContactByNameQuery().data;
+  const {filter} = useSelector(state => state.filter);
+
+ 
+
+  const filteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    const visibleContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
     );
+    return visibleContacts;
   };
 
-  const visibleContacts = getVisibleContacts();
-  return (
+  return (  
     <ul>
-      {visibleContacts.length !== 0 ? (
-        visibleContacts.map(({ id, name, number }) => {
+      {contacts && 
+        filteredContacts().map(({ id, name, phone }) => {
           return (
             <ContactItem
               key={id}
               id={id}
               name={name}
-              number={number}
-              onDeleteContact={()=> dispatch(deleteContact(id))}
+              number={phone}
             />
           );
         })
-      ) : (
-        <li>Not found name</li>
-      )}
+       }
     </ul>
   );
 };
 
 export default ContactList;
+
+

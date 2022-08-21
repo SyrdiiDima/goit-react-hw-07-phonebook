@@ -1,54 +1,45 @@
-
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import css from './Form.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactSlice';
+// import { useDispatch, useSelector } from 'react-redux';
+import {
+  useAddContactsMutation,
+  useGetContactByNameQuery,
+} from 'redux/contactApi';
 
-export const Form = ({ onSubmit, contactsName }) => {
+export const Form = () => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
 
-  const contacts = useSelector(state => state.contacts.items);
-  const dispatch = useDispatch();
+  const [addContact] = useAddContactsMutation();
+  const contacts = useGetContactByNameQuery().data;
 
   const onChangeInputName = event => {
     setName(event.currentTarget.value);
   };
   const onChangeInputNumber = event => {
-    setNumber(event.currentTarget.value);
-  };
-
-  const matchName = (contacts, data) => {
-    return contacts.some(contact => contact.name === data.name);
+    setPhone(event.currentTarget.value);
   };
 
   const handleSubmit = event => {
-    // event.preventDefault();
-
+    event.preventDefault();
     const contactItem = {
-      id: nanoid(10),
       name,
-      number,
+      phone,
     };
 
-    if (matchName(contacts, contactItem)) {
+    if (contacts.find(item => item.name.toLowerCase() === name.toLowerCase())) {
       alert(`${name} is already in contacts`);
-      
-      event.preventDefault();
       reset();
       return;
-
-    } else {
-      event.preventDefault();
-      dispatch(addContact(contactItem));
-      reset();
     }
+
+    addContact(contactItem);
+    reset();
   };
 
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
@@ -77,7 +68,7 @@ export const Form = ({ onSubmit, contactsName }) => {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           onChange={onChangeInputNumber}
-          value={number}
+          value={phone}
         />
       </label>
 
@@ -87,5 +78,3 @@ export const Form = ({ onSubmit, contactsName }) => {
     </form>
   );
 };
-
-
